@@ -17,8 +17,6 @@ const App = () => {
         exercises2={exercises2}
         part3={part3}
         exercises3={exercises3} />
-
-
     </>
 
   )
