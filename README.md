@@ -1,0 +1,1 @@
+The content of this repository consists of assignments from a fullstackopen course at the University of Helsinki focusing on web application development. This repository does not contain any teaching material.
