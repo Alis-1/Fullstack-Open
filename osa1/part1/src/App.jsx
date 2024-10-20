@@ -1,27 +1,17 @@
-const Hello = (props) => {
-
-  console.log(props)
-  return (
-    <div>
-      <p>
-
-        Hello {props.name}, you are {props.age} years old
-      </p>
-    </div>
-  )
-}
+import { useState } from 'react'
 
 const App = () => {
-  const friends = [
-    { name: 'Leevi', age: 4 },
-    { name: 'Venla', age: 10 },
-  ]
+
+  const [ counter, setCounter ] = useState(0)
+
+
+  setTimeout(
+    () => setCounter(counter + 1),
+    1000
+  )
 
   return (
-    <div>
-      <p>{friends[0].name} {friends[0].age}</p>
-      <p>{friends[1].name} {friends[1].age}</p>
-    </div>
+    <div>{counter}</div>
   )
 }
 
