@@ -1,7 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
+const path = require('path');
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
@@ -14,6 +15,8 @@ let persons = [
     { id: 3, name: 'Dan Abramov', number: '12-43-234345' },
     { id: 4, name: 'Mary Poppendieck', number: '39-23-6423122' }
 ];
+
+app.use(express.static(path.join(__dirname, 'build')));
 
 app.get('/api/persons', (req, res) => {
     res.json(persons);
@@ -65,6 +68,10 @@ app.post('/api/persons', (req, res) => {
 
     persons = persons.concat(person);
     res.json(person);
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 app.listen(PORT, () => {

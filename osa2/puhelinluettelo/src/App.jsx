@@ -11,14 +11,14 @@ const App = () => {
   useEffect(() => {
     console.log('effect');
     axios
-      .get('http://localhost:3001/notes')
+      .get('/api/notes')
       .then(response => {
         console.log('promise fulfilled');
         setNotes(response.data);
       });
 
     axios
-      .get('http://localhost:3001/persons')
+      .get('/api/persons')
       .then(response => {
         console.log('persons fetched');
         setPersons(response.data);
@@ -48,9 +48,13 @@ const App = () => {
         name: newName,
         number: newNumber
       };
-      setPersons(persons.concat(personObject));
-      setNewName('');
-      setNewNumber('');
+      axios
+        .post('/api/persons', personObject)
+        .then(response => {
+          setPersons(persons.concat(response.data));
+          setNewName('');
+          setNewNumber('');
+        });
     }
   };
 
@@ -78,7 +82,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        {personsToShow.map(person => <li key={person.name}>{person.name} {person.number}</li>)}
+        {personsToShow.map(person => <li key={person.id}>{person.name} {person.number}</li>)}
       </ul>
     </div>
   );
