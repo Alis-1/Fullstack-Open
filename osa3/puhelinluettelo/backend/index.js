@@ -17,17 +17,17 @@ app.use(morgan('tiny'))
 app.use(express.static(path.join(__dirname, '../frontend/build')))
 
 // Info endpoint
-app.get('/api/info', (request, response) => {
+app.get('/api/info', (_request, response) => {
   Person.countDocuments({}).then(count => {
     response.json({
-      count: count,
+      count,
       date: new Date()
     })
   })
 })
 
 // Get all persons
-app.get('/api/persons', (request, response, next) => {
+app.get('/api/persons', (_request, response, next) => {
   Person.find({})
     .then(persons => {
       response.json(persons)
@@ -49,9 +49,9 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 // Delete person
-app.delete('/api/persons/:id', (request, response, next) => {
-  Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+app.delete('/api/persons/:id', (_request, response, next) => {
+  Person.findByIdAndDelete(_request.params.id)
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -59,15 +59,15 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 // Create person
 app.post('/api/persons', (request, response, next) => {
-  const body = request.body
+  const { name, number } = request.body
 
-  if (!body.name || !body.number) {
+  if (!name || !number) {
     return response.status(400).json({ error: 'name or number missing' })
   }
 
   const person = new Person({
-    name: body.name,
-    number: body.number
+    name,
+    number
   })
 
   person.save()
@@ -79,15 +79,15 @@ app.post('/api/persons', (request, response, next) => {
 
 // Update person
 app.put('/api/persons/:id', (request, response, next) => {
-  const body = request.body
+  const { name, number } = request.body
 
-  if (!body.name || !body.number) {
+  if (!name || !number) {
     return response.status(400).json({ error: 'name or number missing' })
   }
 
   const person = {
-    name: body.name,
-    number: body.number
+    name,
+    number
   }
 
   Person.findByIdAndUpdate(request.params.id, person, { new: true })
@@ -99,12 +99,12 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
-app.get('*', (req, res) => {
+app.get('*', (_request, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build/index.html'))
 })
 
 // Unknown endpoint
-app.use((request, response) => {
+app.use((_request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 })
 
