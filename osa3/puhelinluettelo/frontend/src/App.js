@@ -5,6 +5,7 @@ const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personsService.getAll()
@@ -25,6 +26,10 @@ const App = () => {
         setPersons(persons.concat(response.data))
         setNewName('')
         setNewNumber('')
+        setErrorMessage(null)
+      })
+      .catch(error => {
+        setErrorMessage(error.response.data.error)
       })
   }
 
@@ -47,22 +52,23 @@ const App = () => {
 
   return (
     <div>
-      <h2>Puhelinluettelo</h2>
+      <h2>Phonebook</h2>
+      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
       <form onSubmit={addPerson}>
         <div>
-          Nimi: <input value={newName} onChange={handleNameChange} />
+          name: <input value={newName} onChange={handleNameChange} />
         </div>
         <div>
-          numero: <input value={newNumber} onChange={handleNumberChange} />
+          number: <input value={newNumber} onChange={handleNumberChange} />
         </div>
         <div>
-          <button type="submit">lisää</button>
+          <button type="submit">add</button>
         </div>
       </form>
-      <h2>Numerot</h2>
+      <h2>Numbers</h2>
       {persons.map(person => 
         <div key={person.id}>
-          {person.name} {person.number} <button onClick={() => handleDelete(person.id)}>Poista</button>
+          {person.name} {person.number} <button onClick={() => handleDelete(person.id)}>delete</button>
         </div>
       )}
     </div>

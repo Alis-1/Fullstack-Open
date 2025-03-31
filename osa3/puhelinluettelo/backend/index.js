@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 require('dotenv').config()
+const path = require('path')
 
 const Person = require('./models/person')
 const errorHandler = require('./middleware/errorHandler')
@@ -12,13 +13,16 @@ app.use(cors())
 app.use(express.json())
 app.use(morgan('tiny'))
 
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../frontend/build')))
+
 // Info endpoint
-app.get('/info', (request, response) => {
+app.get('/api/info', (request, response) => {
   Person.countDocuments({}).then(count => {
-    response.send(`
-      <p>Phonebook has info for ${count} people</p>
-      <p>${new Date()}</p>
-    `)
+    response.json({
+      count: count,
+      date: new Date()
+    })
   })
 })
 
@@ -91,6 +95,12 @@ app.put('/api/persons/:id', (request, response, next) => {
       response.json(updatedPerson)
     })
     .catch(error => next(error))
+})
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build/index.html'))
 })
 
 // Unknown endpoint
