@@ -8,7 +8,7 @@ interface Result {
     average: number;
   }
   
-  function calculateExercises(dailyHours: number[], target: number): Result {
+  export const calculateExercises = (dailyHours: number[], target: number): Result => {
     const periodLength = dailyHours.length;
     const trainingDays = dailyHours.filter(day => day > 0).length;
     const average = dailyHours.reduce((a, b) => a + b, 0) / periodLength;
@@ -33,14 +33,16 @@ interface Result {
       target,
       average
     };
-  }
+  };
   
-  const target = Number(process.argv[2]);
-  const dailyHours = process.argv.slice(3).map(Number);
+  if (require.main === module) {
+    const target = Number(process.argv[2]);
+    const dailyHours = process.argv.slice(3).map(Number);
   
-  if (!target || dailyHours.some(isNaN)) {
-    console.log('Please provide valid target and daily hours');
-  } else {
-    console.log(calculateExercises(dailyHours, target));
+    if (!target || dailyHours.some(isNaN)) {
+      console.log('Please provide valid target and daily hours');
+    } else {
+      console.log(calculateExercises(dailyHours, target));
+    }
   }
   
