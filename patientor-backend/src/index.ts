@@ -3,7 +3,7 @@ import cors from 'cors';
 import { v1 as uuid } from 'uuid';
 import diagnoses from './data/diagnoses';
 import patients from './data/patients';
-import { NonSensitivePatient, PatientInput, PatientSchema, Patient } from './types';
+import { NonSensitivePatient, PatientInput, PatientSchema, Patient, EntryInput, EntrySchema } from './types';
 
 const app = express();
 app.use(cors());
@@ -45,11 +45,35 @@ app.post('/api/patients', (req, res) => {
 
     const addedPatient = {
       ...newPatient,
-      id: uuid()
+      id: uuid(),
+      entries: []
     };
 
     patients.push(addedPatient);
     res.json(addedPatient);
+  } catch (error) {
+    res.status(400).json({ error: 'malformatted parameters' });
+  }
+});
+
+app.post('/api/patients/:id/entries', (req, res) => {
+  try {
+    const patient = patients.find(p => p.id === req.params.id);
+    if (!patient) {
+      res.status(404).json({ error: 'Patient not found' });
+      return;
+    }
+
+    const parsedData = EntrySchema.parse(req.body);
+    const newEntry: EntryInput = parsedData;
+
+    const addedEntry = {
+      ...newEntry,
+      id: uuid()
+    };
+
+    patient.entries.push(addedEntry);
+    res.json(addedEntry);
   } catch (error) {
     res.status(400).json({ error: 'malformatted parameters' });
   }
